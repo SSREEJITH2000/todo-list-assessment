@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("/goto")
 public class TaskController {
     private final TaskService taskService;
 
@@ -18,11 +18,11 @@ public class TaskController {
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
-
     @GetMapping
     public ResponseEntity<List<TaskResponse>> getAllTasks() {
-        return new ResponseEntity<>(taskService.getAllTasks(), HttpStatus.OK);
-    }
+        List<TaskResponse> sortedTasks = taskService.getAllTasksSortedByDueDate();
+        return new ResponseEntity<>(sortedTasks, HttpStatus.OK);
+}
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
