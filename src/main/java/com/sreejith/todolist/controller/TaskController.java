@@ -18,11 +18,19 @@ public class TaskController {
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
+
     @GetMapping
     public ResponseEntity<List<TaskResponse>> getAllTasks() {
         List<TaskResponse> sortedTasks = taskService.getAllTasksSortedByDueDate();
         return new ResponseEntity<>(sortedTasks, HttpStatus.OK);
-}
+    }
+
+    @GetMapping("/byStatus/{status}")
+    public ResponseEntity<List<TaskResponse>> getTaskByStatus(
+            @PathVariable TaskResponse.Status status) {
+        List<TaskResponse> sortedTasks = taskService.getAllTasksSortedByStatus(status);
+        return new ResponseEntity<>(sortedTasks, HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {

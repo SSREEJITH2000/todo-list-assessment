@@ -4,7 +4,6 @@ import com.sreejith.todolist.contract.TaskResponse;
 import com.sreejith.todolist.exception.ResourceNotFoundException;
 import com.sreejith.todolist.model.Task;
 import com.sreejith.todolist.repository.TaskRepository;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,10 +23,25 @@ public class TaskService {
         this.taskRepository = taskRepository;
         this.modelMapper = modelMapper;
     }
+
     public List<TaskResponse> getAllTasksSortedByDueDate() {
         List<Task> tasks = taskRepository.findAll();
         tasks.sort(Comparator.comparing(Task::getDueDate));
         return tasks.stream()
+                .map(task -> modelMapper.map(task, TaskResponse.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<TaskResponse> getAllTasksSortedByStatus(TaskResponse.Status status) {
+        List<Task> allTasks = taskRepository.findAll();
+
+        List<Task> tasksFilteredByStatus =
+                allTasks.stream()
+                        .filter(task -> task.getStatus().equals(status.name()))
+                        .sorted(Comparator.comparing(Task::getStatus))
+                        .toList();
+
+        return tasksFilteredByStatus.stream()
                 .map(task -> modelMapper.map(task, TaskResponse.class))
                 .collect(Collectors.toList());
     }
